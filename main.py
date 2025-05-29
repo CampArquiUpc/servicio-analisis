@@ -27,6 +27,7 @@ prompt = """
     Si el método de pago no está en la lista, usa "OTROS".
     Si el monto es un texto transformalo a número.
     Si no se menciona el monto, usa 0.
+    Cualquier texto que no pueda interpretarse devuelve el json vacio.
     Solo crea un gasto.
     Texto: "realize un gasto en el Bus de 100 soles con yape"
 """
