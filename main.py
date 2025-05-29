@@ -9,25 +9,26 @@ import time
 response_schema = {
     "type": "OBJECT",
         "properties": {
-            "action": {"type": "STRING","enum": ["AÑADIR", "REMOVER", "ACTUALIZAR"]},
+            "action": {"type": "STRING","enum": ["ADD", "REMOVE", "UPDATE"]},
             "description": {"type": "STRING"},
-            "mount": {"type": "number"},
-            "Payment method": {"type": "STRING","enum": ["YAPE", "INTERBANK", "BCP","PLIN", "CAJA", "BBVA","SCOTIABANK", "OTROS","EFECTIVO"]},
+            "amount": {"type": "number"},
+            "paymentMethod": {"type": "STRING","enum": ["YAPE", "INTERBANK", "BCP","PLIN", "CAJA", "BBVA","SCOTIABANK", "OTROS","EFECTIVO"]},
         }
 }
 
 prompt = """
      Analiza el siguiente texto y extrae los datos en formato JSON.
 
-    Si se menciona un gasto nuevo, la acción debe ser "AÑADIR".
-    Si se menciona la eliminación de un gasto, la acción debe ser "REMOVER".
-    Si se menciona un cambio, la acción debe ser "ACTUALIZAR".
+    Si se menciona un gasto nuevo, la acción debe ser "ADD".
+    Si se menciona la eliminación de un gasto, la acción debe ser "REMOVE".
+    Si se menciona un cambio, la acción debe ser "UPDATE".
 
     El método de pago debe ser uno de: YAPE, INTERBANK, BCP, PLIN, CAJA, BBVA, SCOTIABANK, EFECTIVO, OTROS.
     Si el método de pago no está en la lista, usa "OTROS".
     Si el monto es un texto transformalo a número.
     Si no se menciona el monto, usa 0.
-    Texto: "el gasto de cine lo pague con transferencia monto un sol"
+    Solo crea un gasto.
+    Texto: "realize un gasto en el Bus de 100 soles con yape"
 """
 
 
@@ -44,6 +45,17 @@ response = client.models.generate_content(
     },
 )
 
+json_data = json.loads(response.text)
 
-print(response.text)
+
+producer = KafkaProducer(
+    bootstrap_servers='localhost:9092',
+    value_serializer=lambda v: json.dumps(v).encode('utf-8')
+)
+
+producer.send("expense-topic",value=json_data)
+
+print("Mensaje enviado a Kafka: "+ str(json_data))
+
+producer.flush()
 
