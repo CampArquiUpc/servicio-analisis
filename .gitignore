@@ -1,1 +1,6 @@
 venv/
+src/__pycache__/
+
+src/infrastructure/google/__pycache__/
+
+src/infrastructure/kafka/__pycache__/
