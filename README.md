@@ -1,3 +1,6 @@
+# Ejecutar Docker
+docker compose up
+
 python -m venv venv
 
 # Activar entorno virtual linux
