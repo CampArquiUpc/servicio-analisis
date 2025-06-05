@@ -2,14 +2,15 @@ from google.cloud import speech
 from google.oauth2 import service_account
 import tempfile
 
-ruta_credenciales = "F:\\audios\\pontebarbon-a4bd39860683.json"
-credentials = service_account.Credentials.from_service_account_file(ruta_credenciales)
+
+
 
 
 
 def transcribe_audio(file_path):
+    
 
-    client = speech.SpeechClient(credentials=credentials)
+    client = speech.SpeechClient()
 
     with open(file_path, "rb") as audio_file:
         content = audio_file.read()

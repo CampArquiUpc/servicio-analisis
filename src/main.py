@@ -5,6 +5,10 @@ from infrastructure.google.speechToTextModule import transcribe_audio
 from infrastructure.google.geminiModule import get_json_by_ia
 from infrastructure.kafka.kafkaModule import sendToKafka
 
+
+#Tener una variable de entorno y definir la ruta de la llave
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "F:/audios/pontebarbon-72bb9564c4b0.json"
+
 app = Flask(__name__, template_folder='templates')
 
 # Carpeta donde se guardarán los archivos subidos
@@ -40,7 +44,7 @@ def transcribe():
         
         jsonData = get_json_by_ia(texto)
 
-        sendToKafka("expense-topic",jsonData)
+        sendToKafka(jsonData,"expense-topic")
 
         return jsonify({"transcription": jsonData}), 202
 
